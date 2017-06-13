@@ -44,6 +44,21 @@ The node will also start in [admin party mode](http://guide.couchdb.org/draft/se
 Note that you can also use the NODENAME environment variable to set the name of the CouchDB node inside the container.
 Once running, you can visit the new admin interface at `http://dockerhost:5984/_utils/`
 
+### Automate a 2.0.0 single node cluster
+
+Based on the image [klaemo/couchdb:2.0.0](https://index.docker.io/u/klaemo/couchdb/) you can bypass
+the admin party configuration setup by manually creating the required databases and admin user.
+
+```bash
+curl -X PUT http://127.0.0.1:5984/_users
+curl -X PUT http://127.0.0.1:5984/_replicator
+curl -X PUT http://127.0.0.1:5984/_global_changes
+curl -X PUT http://127.0.0.1:5984/_node/nonode@nohost/_config/admins/admin -d '"password"'
+```
+
+In the above example, the `admin` user is created with a password of `password`.
+The node name specified is `nonode@nohost`. Do a `GET /_membership` to get the node's name.
+
 ## Run (1.6.1)
 
 Available as an official image on Docker Hub as [couchdb](https://hub.docker.com/_/couchdb/)
@@ -131,21 +146,6 @@ docker run -it -p 5984:5984 klaemo/couchdb:dev --with-admin-party-please --with-
 # Start two nodes (without proxy) exposed on port 15984 and 25984
 docker run -it -p 15984:15984 -p 25984:25984 klaemo/couchdb:dev -n 2
 ```
-
-### Automate a 2.0 single node cluster
-
-Based on the image [klaemo/couchdb:2.0.0](https://index.docker.io/u/klaemo/couchdb/) you can bypass
-the admin party configuration setup by manually creating the required databases and admin user.
-
-```bash
-curl -X PUT http://127.0.0.1:5984/_users
-curl -X PUT http://127.0.0.1:5984/_replicator
-curl -X PUT http://127.0.0.1:5984/_global_changes
-curl -X PUT http://127.0.0.1:5984/_node/nonode@nohost/_config/admins/admin -d '"password"'
-```
-
-In the above example, the `admin` user is created with a password of `password`.
-The node name specified is `nonode@nohost`. Do a `GET /_membership` to get the node's name.
 
 ## Build your own
 
